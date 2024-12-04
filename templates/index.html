@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div id="reportContainer">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+        <script>
+            fetch('/embed-info')
+                .then(response => response.json())
+                .then(data => {
+                    var models = window['powerbi-client'].models;
+                    var config = {
+                        type: 'report',
+                        tokenType: models.TokenType.Embed,
+                        accessToken: data.token,
+                        embedUrl: data.embedUrl,
+                        id: data.reportId,
+                        settings: {
+                            panes: {
+                                filters: { visible: false },
+                                pageNavigation: { visible: true }
+                            }
+                        }
+                    };
+                    var reportContainer = document.getElementById('reportContainer');
+                    powerbi.embed(reportContainer, config);
+                })
+                .catch(error => console.error('Error embedding report:', error));
+        </script>
+    </div>
+</body>
+
+</html>
