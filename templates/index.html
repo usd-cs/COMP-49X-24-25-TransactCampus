@@ -9,31 +9,64 @@
 </head>
 
 <body>
-    <div id="reportContainer">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
-        <script>
-            fetch('/embed-info')
-                .then(response => response.json())
-                .then(data => {
-                    var models = window['powerbi-client'].models;
-                    var config = {
-                        type: 'report',
-                        tokenType: models.TokenType.Embed,
-                        accessToken: data.token,
-                        embedUrl: data.embedUrl,
-                        id: data.reportId,
-                        settings: {
-                            panes: {
-                                filters: { visible: false },
-                                pageNavigation: { visible: true }
-                            }
-                        }
-                    };
-                    var reportContainer = document.getElementById('reportContainer');
-                    powerbi.embed(reportContainer, config);
-                })
-                .catch(error => console.error('Error embedding report:', error));
-        </script>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/USD_LOGO.png') }}" alt="Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Overview</a></li>
+                    <li><a href="#">Nutrition Analysis</a></li>
+                    <li><a href="#">Order Timing</a></li>
+                    <li><a href="#">Popularity</a></li>
+                    <li><a href="#">Spending</a></li>
+                    <li><a href="#">Health Groupings</a></li>
+                    <li><a href="#"></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Admin Profile -->
+            <header class="admin-header">
+                <div class="profile">
+                    <img src="{{ url_for('static', filename='images/admin.png') }}" alt="Admin Profile">
+                    <span class="role">Admin</span>
+                </div>
+            </header>
+
+            <!-- Report Container 
+            <div id="reportContainer">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
+                <script>
+                    fetch('/embed-info')
+                        .then(response => response.json())
+                        .then(data => {
+                            var models = window['powerbi-client'].models;
+                            var config = {
+                                type: 'report',
+                                tokenType: models.TokenType.Embed,
+                                accessToken: data.token,
+                                embedUrl: data.embedUrl,
+                                id: data.reportId,
+                                settings: {
+                                    panes: {
+                                        filters: { visible: false },
+                                        pageNavigation: { visible: true }
+                                    }
+                                }
+                            };
+                            var reportContainer = document.getElementById('reportContainer');
+                            powerbi.embed(reportContainer, config);
+                        })
+                        .catch(error => console.error('Error embedding report:', error));
+                </script>
+            </div>
+            -->
+        </main>
     </div>
 </body>
 

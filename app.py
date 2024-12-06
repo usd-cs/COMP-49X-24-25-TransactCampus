@@ -1,12 +1,8 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, render_template
 from pb_api import get_embed_token
-from sqlalchemy import create_engine
+
 
 app = Flask(__name__)
-
-# PostgreSQL database configuration
-DATABASE_URI = "postgresql://username:password@host:port/database"
-engine = create_engine(DATABASE_URI)
 
 
 @app.route("/")
@@ -23,14 +19,14 @@ def get_embed_info():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/data", methods=["GET"])
+"""@app.route("/data", methods=["GET"])
 def get_data():
     query = "SELECT * FROM your_table"
     with engine.connect() as connection:
         result = connection.execute(query)
         data = [dict(row) for row in result]
-    return jsonify(data)
+    return jsonify(data)"""
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80)
