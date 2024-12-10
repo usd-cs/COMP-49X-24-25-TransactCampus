@@ -9,6 +9,7 @@ body {
     align-items: flex-start;
     font-family: 'Open Sans', Arial, sans-serif;
     height: 100vh;
+    overflow: hidden;
 }
 
 /* Dashboard Layout */
