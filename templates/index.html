@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/USD_LOGO.png') }}" alt="Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Overview</a></li>
+                    <li><a href="#">Nutrition Analysis</a></li>
+                    <li><a href="#">Order Timing</a></li>
+                    <li><a href="#">Popularity</a></li>
+                    <li><a href="#">Spending</a></li>
+                    <li><a href="#">Health Groupings</a></li>
+                    <li><a href="#">Incentive Actions</a></li>
+                    <li><a href="#">Filter Data</a></li>
+                    <li><a href="#"></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Admin Profile -->
+            <header class="admin-header">
+                <div class="profile">
+                    <img src="{{ url_for('static', filename='images/admin.png') }}" alt="Admin Profile">
+                    <span class="role">Admin</span>
+                </div>
+            </header>
+
+            <div id="reportContainer">
+                <iframe title="totalRivera" width="1140" height="541.25"
+                    src="https://app.powerbi.com/reportEmbed?reportId=8857d370-78fa-4a90-9ccd-e94e859f8ef3&autoAuth=true&ctid=fe4e1583-fb6f-48dd-8524-d06ad7501045"
+                    frameborder="0" allowFullScreen="true"></iframe>
+            </div>
+
+        </main>
+    </div>
+</body>
+
+</html>
