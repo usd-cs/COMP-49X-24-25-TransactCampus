@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+
 </head>
 
 <body>
@@ -23,6 +26,8 @@
                     <li><a href="#">Popularity</a></li>
                     <li><a href="#">Spending</a></li>
                     <li><a href="#">Health Groupings</a></li>
+                    <li><a href="#">Incentive Actions</a></li>
+                    <li><a href="#">Filter Data</a></li>
                     <li><a href="#"></a></li>
                 </ul>
             </nav>
@@ -38,34 +43,12 @@
                 </div>
             </header>
 
-            <!-- Report Container 
             <div id="reportContainer">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.19.1/powerbi.min.js"></script>
-                <script>
-                    fetch('/embed-info')
-                        .then(response => response.json())
-                        .then(data => {
-                            var models = window['powerbi-client'].models;
-                            var config = {
-                                type: 'report',
-                                tokenType: models.TokenType.Embed,
-                                accessToken: data.token,
-                                embedUrl: data.embedUrl,
-                                id: data.reportId,
-                                settings: {
-                                    panes: {
-                                        filters: { visible: false },
-                                        pageNavigation: { visible: true }
-                                    }
-                                }
-                            };
-                            var reportContainer = document.getElementById('reportContainer');
-                            powerbi.embed(reportContainer, config);
-                        })
-                        .catch(error => console.error('Error embedding report:', error));
-                </script>
+                <iframe title="totalRivera" width="1140" height="541.25"
+                    src="https://app.powerbi.com/reportEmbed?reportId=8857d370-78fa-4a90-9ccd-e94e859f8ef3&autoAuth=true&ctid=fe4e1583-fb6f-48dd-8524-d06ad7501045"
+                    frameborder="0" allowFullScreen="true"></iframe>
             </div>
-            -->
+
         </main>
     </div>
 </body>
