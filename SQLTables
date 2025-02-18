@@ -1,0 +1,45 @@
+
+CREATE TABLE orders (
+    orderid BIGINT PRIMARY KEY,
+    locationid INT,
+    cafeteriaid INT,
+    campusid INT,
+    released_datetime TIMESTAMP,
+    complete_datetime TIMESTAMP,
+    local_time TIMESTAMP,
+    number_of_items INT
+);
+
+CREATE TABLE nutrition_data (
+    food_id BIGINT PRIMARY KEY,
+    food_name VARCHAR(255),
+    price_dollars DECIMAL(6,2),
+    kcal INT,
+    nutrition_fat_g INT,
+    nutrition_cholesterol_mg INT,
+    nutrition_sodium_mg INT,
+    nutrition_carbohydrates_g INT,
+    nutrition_fiber_g INT,
+    nutrition_sugar_g INT,
+    nutrition_protein_g INT,
+    food_category VARCHAR(100),
+    locationid INT,
+    location_name VARCHAR(50)
+);
+
+-- Create the transactions table
+CREATE TABLE transactions (
+    data_index SERIAL PRIMARY KEY,  -- Auto-incrementing unique identifier
+    orderid BIGINT NOT NULL,  -- Unique order ID
+    userid BIGINT NOT NULL,  -- User who placed the order
+    locationid INT NOT NULL,  -- Location where the order was placed
+    order_total_dollars DECIMAL(10,2) NOT NULL,  -- Total cost of the order
+    number_of_items INT NOT NULL,  -- Number of items in the order
+    local_creation_datetime TIMESTAMP NOT NULL,  -- When the order was created
+    complete_datetime TIMESTAMP,  -- When the order was completed
+    pickup_datetime TIMESTAMP,  -- When the order was picked up
+    released_datetime TIMESTAMP,  -- When the order was released for pickup
+    order_specific_food_id BIGINT NOT NULL,  -- Unique identifier for each food item in the order
+    food_id BIGINT NOT NULL,  -- Food ID from the nutrition dataset
+    item_price_dollars DECIMAL(6,2) NOT NULL  -- Price of the specific food item
+);
