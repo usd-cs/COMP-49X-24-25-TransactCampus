@@ -1,0 +1,31 @@
+MonthlyDinnerOrders = 
+SUMMARIZE (
+    FILTER (
+        'public orders',
+        HOUR('public orders'[local_time]) >= 16 && 
+        HOUR('public orders'[local_time]) < 22
+    ),
+    ('public orders'[local_time]),
+    "Total Orders", COUNT('public orders'[orderid])
+)
+
+TotalItemsDinnerPeriod = 
+CALCULATE (
+    SUM('public transactions'[number_of_items]),
+    FILTER (
+        'public transactions',
+        HOUR('public transactions'[released_datetime]) >= 16 &&
+        HOUR('public transactions'[released_datetime]) < 22
+    )
+)
+
+
+UniqueUsersDinnerPeriod2 = 
+CALCULATE (
+    DISTINCTCOUNT('public transactions'[userid]),
+    FILTER (
+        'public transactions',
+        HOUR('public transactions'[released_datetime]) >= 16 &&
+        HOUR('public transactions'[released_datetime]) < 22
+    )
+)
