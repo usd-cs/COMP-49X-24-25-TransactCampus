@@ -1,0 +1,53 @@
+BreakfastMappedLocationsTable = 
+VAR TopLocations = 
+    TOPN(
+        6, 
+        SUMMARIZE(
+            FILTER(
+                'public orders', 
+                HOUR('public orders'[complete_datetime]) >= 6 && 
+                HOUR('public orders'[complete_datetime]) < 11
+            ),
+            'public orders'[locationid], 
+            "@OrderCount", COUNT('public orders'[orderid])
+        ), 
+        [@OrderCount], 
+        DESC
+    )
+
+VAR LocationMapping = 
+    ADDCOLUMNS(
+        TopLocations,
+        "Location Name", 
+            SWITCH(
+                RANKX(TopLocations, [@OrderCount], , DESC),
+                1, "SLP",
+                2, "Bert’s Bistro",
+                3, "La Paloma",
+                4, "Olivas",
+                5, "Aromas",
+                6, "Bosley Cafe"
+            ),
+        "Latitude", 
+            SWITCH(
+                RANKX(TopLocations, [@OrderCount], , DESC),
+                1, 32.77250447572887,
+                2, 32.771948713075005,
+                3, 32.77038091870093,
+                4, 32.770604195709645,
+                5, 32.77215668840376,
+                6, 32.77403696428342
+            ),
+        "Longitude", 
+            SWITCH(
+                RANKX(TopLocations, [@OrderCount], , DESC),
+                1, -117.18765058830759,
+                2, -117.19456891329116,
+                3, -117.19388165559744,
+                4, -117.19329450477345,
+                5, -117.19003200677793,
+                6, -117.18590108196449
+            )
+    )
+
+RETURN LocationMapping
