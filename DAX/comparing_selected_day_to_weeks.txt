@@ -1,0 +1,105 @@
+Dinner_Orders_Compare_Days = 
+VAR SelectedDate = SELECTEDVALUE(DateSelection[Date])
+VAR SelectedWeekOffset = SELECTEDVALUE(WeekSelection[Week Offset])
+VAR SelectedWeekStart = SelectedDate + SelectedWeekOffset
+VAR SelectedWeekEnd = SelectedWeekStart + 6  -- Full week (7 days)
+
+VAR TimeIntervals = GENERATESERIES(
+    TIME(16,0,0), 
+    TIME(22,0,0), 
+    TIME(0,15,0)  -- 15-minute increments
+)
+
+RETURN
+ADDCOLUMNS(
+    TimeIntervals,
+    "Time Bucket", FORMAT([Value], "HH:mm"),
+    "Time Bucket Sort", HOUR([Value]) * 60 + MINUTE([Value]),  -- Creates a numeric sort value
+    
+    "Selected Date", SelectedDate,
+    "Selected Date's Orders", 
+    VAR SelectedStart = SelectedDate + [Value]
+    VAR SelectedEnd = SelectedStart + TIME(0,15,0)
+    RETURN 
+        CALCULATE(
+            COUNT('public orders'[orderid]),
+            'public orders'[local_time] >= SelectedStart,
+            'public orders'[local_time] < SelectedEnd
+        ),
+
+    "Selected Week Start", SelectedWeekStart,
+    "Selected Week's Orders", 
+    VAR WeekStart = SelectedWeekStart + [Value]
+    VAR WeekEnd = WeekStart + TIME(0,15,0)
+    RETURN 
+        CALCULATE(
+            COUNT('public orders'[orderid]),
+            'public orders'[local_time] >= WeekStart,
+            'public orders'[local_time] < WeekEnd
+        )
+)
+
+
+
+Selected Date Orders = 
+VAR SelectedTimeBucket = MAX(Dinner_Orders_Compare_Days[Time Bucket])
+VAR SelectedStart = SELECTEDVALUE(DateSelection[Date]) + SelectedTimeBucket
+VAR SelectedEnd = SelectedStart + TIME(0,15,0)
+
+RETURN 
+CALCULATE(
+    COUNT('public orders'[orderid]),
+    'public orders'[local_time] >= SelectedStart,
+    'public orders'[local_time] < SelectedEnd
+)
+
+
+Selected Week Orders = 
+VAR SelectedTimeBucket = MAX(Dinner_Orders_Compare_Days[Time Bucket])
+VAR WeekStart = (SELECTEDVALUE(DateSelection[Date]) + SELECTEDVALUE(WeekSelection[Week Offset])) + SelectedTimeBucket
+VAR WeekEnd = WeekStart + TIME(0,15,0)
+
+RETURN 
+CALCULATE(
+    COUNT('public orders'[orderid]),
+    'public orders'[local_time] >= WeekStart,
+    'public orders'[local_time] < WeekEnd
+)
+
+
+SelectedWeekOffsetMeasure = SELECTEDVALUE(WeekSelection[Week Offset])
+
+
+
+SelectedDateMeasure = SELECTEDVALUE(DateSelection[Date], TODAY())
+
+SelectedDateMeasure = SELECTEDVALUE(DateSelection[Date])
+
+SelectedWeekOffsetMeasure = SELECTEDVALUE(WeekSelection[Week Offset])
+
+
+SelectedWeekStartMeasure2 = [SelectedDateMeasure] + [SelectedWeekOffsetMeasure]
+
+
+
+This is for the dropdown menus
+
+DateSelection = 
+ADDCOLUMNS(
+    CALENDAR(DATE(2025,1,1), DATE(2025, 5, 31)),  -- Creates a list of dates from Jan 1, 2024, to today
+    "Formatted Date", FORMAT([Date], "MM/DD/YYYY")
+)
+
+
+WeekSelection = 
+DATATABLE(
+    "Week Name", STRING, 
+    "Week Offset", INTEGER,
+    {
+        {"Yesterday", -1},
+        {"Last Week", -7},
+        {"Two Weeks Ago", -14},
+        {"Three Weeks Ago", -21},
+        {"Four Weeks Ago", -28}
+    }
+)
