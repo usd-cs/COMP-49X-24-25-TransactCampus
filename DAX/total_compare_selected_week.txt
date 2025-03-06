@@ -1,0 +1,49 @@
+Dropdown menus
+
+TotalWeekSelection = 
+DATATABLE(
+    "Week Name", STRING, 
+    "Week Offset", INTEGER,
+    {
+        {"Yesterday", -1},
+        {"Last Week", -7},
+        {"Two Weeks Ago", -14},
+        {"Three Weeks Ago", -21},
+        {"Four Weeks Ago", -28}
+    }
+)
+
+
+TotalDateSelection = 
+ADDCOLUMNS(
+    CALENDAR(DATE(2025,1,1), DATE(2025, 5, 31)),  
+    "Formatted Date", FORMAT([Date], "MM/DD/YYYY")
+)
+
+
+Selected Date Orders Total = 
+VAR SelectedTimeBucket = MAX(Total_Orders_Hourly_Buckets[Hour])
+VAR SelectedStart = SELECTEDVALUE(TotalDateSelection[Date]) + SelectedTimeBucket
+VAR SelectedEnd = SelectedStart + TIME(1,0,0)
+
+RETURN 
+CALCULATE(
+    COUNT('public orders'[orderid]),
+    'public orders'[local_time] >= SelectedStart,
+    'public orders'[local_time] < SelectedEnd
+)
+
+
+
+
+Selected Week Orders Total = 
+VAR SelectedTimeBucket = MAX(Total_Orders_Hourly_Buckets[Hour])
+VAR WeekStart = (SELECTEDVALUE(TotalDateSelection[Date]) + SELECTEDVALUE(TotalWeekSelection[Week Offset])) + SelectedTimeBucket
+VAR WeekEnd = WeekStart + TIME(1,0,0)
+
+RETURN 
+CALCULATE(
+    COUNT('public orders'[orderid]),
+    'public orders'[local_time] >= WeekStart,
+    'public orders'[local_time] < WeekEnd
+)
