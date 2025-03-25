@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 def calculate_nutri_score(nutrients, is_beverage=False):
     """Calculates the Nutri-Score based on provided nutrients (Updated 2024 formula).
 
@@ -27,10 +30,16 @@ def calculate_nutri_score(nutrients, is_beverage=False):
     negative_points += nutrients["sodium"] / 90
 
     # Positive points
-    if is_beverage:
-        positive_points = nutrients.get("fruit_juice_percent", 0)
-    else:
-        positive_points = nutrients.get("fruit_veg_nuts_percent", 0)
+    fruit_veg_nuts = nutrients.get("fruit_veg_nuts_percent", 0)
+    # Real Nutri-Score gives:
+    # 0 points <40%, 1 point if ≥40%, 2 if ≥60%, 5 if ≥80%
+    if fruit_veg_nuts >= 80:
+        positive_points += 5
+    elif fruit_veg_nuts >= 60:
+        positive_points += 2
+    elif fruit_veg_nuts >= 40:
+        positive_points += 1
+
     positive_points += nutrients["fiber"] / 0.9
     positive_points += nutrients["protein"] / 3.5
 
@@ -60,76 +69,55 @@ def calculate_nutri_score(nutrients, is_beverage=False):
             return "E"
 
 
-def calculate_nutri_score_2024(nutrients, is_beverage=False):
-    """Calculates the Nutri-Score based on provided nutrients (Updated 2024 formula - Conceptual).
+def estimate_fruit_veg_nut_percent(row):
+    name = row["food_name"].lower()
+    category = row["food_category"].lower()
 
-    Args:
-        nutrients (dict): Dictionary of nutrient values per 100g/100ml.
-            Required keys: energy, sugars, saturated_fat, sodium, fiber, protein
-            Optional key for beverages: fruit_juice_percent
-            Optional key for general food: fruit_veg_nuts_percent
-            Optional key: sweeteners (bool)
-        is_beverage (bool): True if the product is a beverage, False otherwise.
-
-    Returns:
-        str: The Nutri-Score letter (A-E) or None if input is invalid.
-    """
-    score = calculate_nutri_score(nutrients, is_beverage)
-
-    # 2024 changes (Conceptual implementation):
-    if is_beverage and nutrients.get(
-        "sweeteners", False
-    ):  # Check for sweeteners in beverages
-        if score == "B":
-            score = "C"
-        elif score == "A":
-            score = "B"
-        elif score == "C":
-            score = "D"
-        elif score == "D":
-            score = "E"
-
-    # More nuanced changes for 2024 would go here (e.g., fiber, protein recalibration)
-    # These changes are not yet publicly available in detail.
-
-    return score
+    if (
+        "salad" in name
+        or "vegetable" in name
+        or category in ["salads", "vegan", "fruit"]
+    ):
+        return 80
+    elif "wrap" in name or "bowl" in name or "tofu" in name:
+        return 60
+    elif "sandwich" in name or "chicken" in name:
+        return 40
+    else:
+        return 0  # assume processed or mixed food
 
 
-# Example Usage
+# Apply scoring
+def get_nutri_score(row):
+    try:
+        nutrients = {
+            "energy": row["kcal"] * 4.184,  # kcal to kJ
+            "sugars": row["nutrition_sugar_g"],
+            "saturated_fat": row[
+                "nutrition_fat_g"
+            ],  # assuming total fat = saturated fat
+            "sodium": row["nutrition_sodium_mg"],
+            "fiber": row["nutrition_fiber_g"],
+            "protein": row["nutrition_protein_g"],
+            "fruit_veg_nuts_percent": estimate_fruit_veg_nut_percent(row),
+        }
+        is_beverage = row["food_category"].lower() in [
+            "beverage",
+            "drink",
+            "juice",
+            "blended",
+            "smoothies",
+        ]
+        return calculate_nutri_score(nutrients, is_beverage)
+    except Exception as e:
+        return None
 
-# Example: Soda with sweeteners (Illustrative)
-soda_nutrients = {
-    "energy": 100,  # kJ
-    "sugars": 10,
-    "saturated_fat": 0,
-    "sodium": 50,
-    "fiber": 0,
-    "protein": 0,
-    "fruit_juice_percent": 0,
-    "sweeteners": True,  # added sweeteners for 2024 test
-}
 
-soda_score_2023 = calculate_nutri_score(soda_nutrients, is_beverage=True)
-soda_score_2024 = calculate_nutri_score_2024(soda_nutrients, is_beverage=True)
-print(f"Soda Nutri-Score (2023): {soda_score_2023}")
-print(f"Soda Nutri-Score (2024 - with sweeteners): {soda_score_2024}")
+# Load our data
+df = pd.read_csv("food.csv")
 
-soda_nutrients_nosweetener = {
-    "energy": 100,  # kJ
-    "sugars": 10,
-    "saturated_fat": 0,
-    "sodium": 50,
-    "fiber": 0,
-    "protein": 0,
-    "fruit_juice_percent": 0,
-    "sweeteners": False,  # added sweeteners for 2024 test
-}
+# Add the new column
+df["food_score"] = df.apply(get_nutri_score, axis=1)
 
-soda_score_2023_nosweetener = calculate_nutri_score(
-    soda_nutrients_nosweetener, is_beverage=True
-)
-soda_score_2024_nosweetener = calculate_nutri_score_2024(
-    soda_nutrients_nosweetener, is_beverage=True
-)
-print(f"Soda Nutri-Score (2023): {soda_score_2023_nosweetener}")
-print(f"Soda Nutri-Score (2024 - without sweeteners): {soda_score_2024_nosweetener}")
+# Save to a new CSV
+df.to_csv("scored_food.csv", index=False)
