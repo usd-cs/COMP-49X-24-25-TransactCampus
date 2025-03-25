@@ -2,17 +2,15 @@ import pandas as pd
 
 
 def calculate_nutri_score(nutrients, is_beverage=False):
-    """Calculates the Nutri-Score based on provided nutrients (Updated 2024 formula).
+    """
+    Calculates a Nutri-Score-like value on a scale of 1 (least healthy) to 100 (most healthy).
 
     Args:
         nutrients (dict): Dictionary of nutrient values per 100g/100ml.
-            Required keys: energy, sugars, saturated_fat, sodium, fiber, protein
-            Optional key for beverages: fruit_juice_percent
-            Optional key for general food: fruit_veg_nuts_percent
-        is_beverage (bool): True if the product is a beverage, False otherwise.
+        is_beverage (bool): True if the product is a beverage.
 
     Returns:
-        str: The Nutri-Score letter (A-E) or None if input is invalid.
+        int: Score from 1 (unhealthy) to 100 (healthy).
     """
 
     required_keys = ["energy", "sugars", "saturated_fat", "sodium", "fiber", "protein"]
@@ -31,8 +29,6 @@ def calculate_nutri_score(nutrients, is_beverage=False):
 
     # Positive points
     fruit_veg_nuts = nutrients.get("fruit_veg_nuts_percent", 0)
-    # Real Nutri-Score gives:
-    # 0 points <40%, 1 point if ≥40%, 2 if ≥60%, 5 if ≥80%
     if fruit_veg_nuts >= 80:
         positive_points += 5
     elif fruit_veg_nuts >= 60:
@@ -40,33 +36,23 @@ def calculate_nutri_score(nutrients, is_beverage=False):
     elif fruit_veg_nuts >= 40:
         positive_points += 1
 
-    positive_points += nutrients["fiber"] / 0.9
-    positive_points += nutrients["protein"] / 3.5
+    positive_points += min(nutrients["fiber"] / 0.9, 5)
+    positive_points += min(nutrients["protein"] / 3.5, 5)
 
-    score = negative_points - positive_points
+    raw_score = negative_points - positive_points
 
-    if is_beverage:
-        if score < 1:
-            return "A"
-        elif score < 5:
-            return "B"
-        elif score < 9:
-            return "C"
-        elif score < 13:
-            return "D"
-        else:
-            return "E"
-    else:
-        if score <= -1:
-            return "A"
-        elif score <= 2:
-            return "B"
-        elif score <= 10:
-            return "C"
-        elif score <= 18:
-            return "D"
-        else:
-            return "E"
+    # Normalize raw_score to a range from 1 (worst) to 100 (best)
+    # Estimated range: worst ~40, best ~-15 → map [40, -15] to [1, 100]
+    # Clamp to avoid out-of-bounds values
+
+    min_raw = -15
+    max_raw = 40
+    raw_score_clamped = max(min(raw_score, max_raw), min_raw)
+
+    normalized_score = 100 - int(
+        ((raw_score_clamped - min_raw) / (max_raw - min_raw)) * 99
+    )
+    return normalized_score
 
 
 def estimate_fruit_veg_nut_percent(row):
