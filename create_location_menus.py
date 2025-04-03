@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 # Define input and output directories
-input_file = "CSV/food.csv"
+input_file = "CSV/scored_food.csv"
 output_dir = "CSV/location_menu_tables"
 os.makedirs(output_dir, exist_ok=True)
 
