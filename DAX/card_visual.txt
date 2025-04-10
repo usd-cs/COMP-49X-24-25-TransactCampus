@@ -1,0 +1,63 @@
+CardHTML = 
+VAR Grade = [Letter Grade]
+VAR Percentage = FORMAT([Average Location Score], "0.00") & "%"
+VAR Icon = 
+    SWITCH(
+        TRUE(),
+        Grade = "A", "🥇",
+        Grade = "B", "✅",
+        Grade = "C", "⚠️",
+        Grade = "D", "😬",
+        "❌"
+    )
+VAR Color = 
+    SWITCH(
+        TRUE(),
+        Grade = "A", "green",
+        Grade = "B", "lightgreen",
+        Grade = "C", "orange",
+        Grade = "D", "orangered",
+        "red"
+    )
+RETURN
+"<div style='display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%'>
+    <div style='font-size:16px; font-weight:bold; color:black; margin-bottom:6px;'>Location Food Score</div>
+    <div style='display:flex; align-items:center; justify-content:center;'> 
+
+        <div style='font-size:64px; color:" & Color & "; font-weight:bold; margin-right:10px;'>" & Grade & "</div>
+        <div style='font-size:28px;'>" & Icon & "</div>
+    </div>
+    <div style='font-size:20px; font-weight:bold; color:black; margin-top:0px;'>" & Percentage & "</div>
+</div>"
+
+
+
+Average Location Score = VAR SelectedLocation = SELECTEDVALUE(ScoredGradedCategorizedMenuData[location_name])
+RETURN
+    AVERAGEX(
+        FILTER(ScoredGradedCategorizedMenuData, ScoredGradedCategorizedMenuData[location_name] = SelectedLocation),
+        ScoredGradedCategorizedMenuData[food_score]
+    )
+
+
+Letter Grade = 
+VAR Score = [Average Location Score]
+RETURN
+    SWITCH(
+        TRUE(),
+        Score >= 65, "A",
+        Score >= 36, "B",
+        Score >= 20, "C",
+        Score >= 10, "D",
+        "F"
+    )
+
+
+    IconLegend = 
+"<div>
+    <div>🥇 <strong>A — Excellent</strong></div>
+    <div>✅ <strong>B — Healthy</strong></div>
+    <div>⚠️ <strong>C — Average</strong></div>
+    <div>😬 <strong>D — Not Very Healthy</strong></div>
+    <div>❌ <strong>F — Unhealthy</strong></div>
+</div>"

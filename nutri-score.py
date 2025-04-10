@@ -99,11 +99,30 @@ def get_nutri_score(row):
         return None
 
 
+def get_letter_grade(score):
+    # 0 - 10 F
+    # 10 - 20 D
+    # 20 - 35 C
+    # 36 - 65 B
+    # 65 - 100 A
+    if score >= 65:
+        return "A"
+    elif score >= 36:
+        return "B"
+    elif score >= 20:
+        return "C"
+    elif score >= 10:
+        return "D"
+    else:
+        return "F"
+
+
 # Load our data
 df = pd.read_csv("food.csv")
 
 # Add the new column
 df["food_score"] = df.apply(get_nutri_score, axis=1)
+df["letter_grade"] = df["food_score"].apply(get_letter_grade)
 
 # Save to a new CSV
 df.to_csv("scored_food.csv", index=False)
