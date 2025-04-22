@@ -55,11 +55,15 @@ n_clusters = 4 # based off of elbow method
 kmeans = KMeans(n_clusters=n_clusters, random_state=42)
 student_feats['cluster'] = kmeans.fit_predict(X_scaled)
 
-print(student_feats['cluster'].value_counts())
+# Map cluster numbers to names
+cluster_names = {0: 'moderate', 1: 'mixed', 2: 'risky', 3: 'favorable'}
+student_feats['cluster_name'] = student_feats['cluster'].map(cluster_names)
+
+print(student_feats['cluster_name'].value_counts())
 
 # Scatter plot in original feature space
 plt.figure(figsize=(8,6))
-plt.scatter(
+scatter = plt.scatter(
     student_feats['avg_score'],
     student_feats['total_items'],
     c=student_feats['cluster'],
@@ -70,7 +74,10 @@ plt.scatter(
 plt.xlabel('Average Food Score')
 plt.ylabel('Total Items Ordered')
 plt.title('Clusters: Avg Score vs Total Items')
-plt.colorbar(label='Cluster')
+# Custom colorbar with cluster names
+cbar = plt.colorbar(scatter, ticks=[0,1,2,3])
+cbar.ax.set_yticklabels([cluster_names[i] for i in range(4)])
+cbar.set_label('Cluster')
 plt.tight_layout()
 plt.show()
 
