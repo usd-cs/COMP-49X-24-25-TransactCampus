@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/USD_LOGO.png') }}" alt="Logo" />
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('report', report_id='overview') }}">Overview</a></li>
+                    <li><a href="{{ url_for('report', report_id='nutrition') }}">Nutrition Analysis</a></li>
+                    <li><a href="{{ url_for('report', report_id='groupings') }}">Health Groupings</a></li>
+                    <li><a href="{{ url_for('report', report_id='incentives') }}">Incentive Actions</a></li>
+                    <li><a href="{{ url_for('report', report_id='filter') }}">Filter Data</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <header class="admin-header">
+                <div class="profile">
+                    <img src="{{ url_for('static', filename='images/admin.png') }}" alt="Admin Profile" />
+                    <span class="role">Admin</span>
+                </div>
+            </header>
+
+            <!-- Dynamic content here -->
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
