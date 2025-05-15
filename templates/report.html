@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Report{% endblock %}
+
+{% block content %}
+<div id="reportContainer">
+    <iframe id="reportFrame" title="Power BI Report" width="1140" height="541.25"
+        src="{{ report_url }}"
+        frameborder="0" allowFullScreen="true"></iframe>
+</div>
+{% endblock %}

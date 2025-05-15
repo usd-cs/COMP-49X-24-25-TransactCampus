@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Home Dashboard{% endblock %}
+
+{% block content %}
+<div class="scaled-dashboard">
+    <section class="dashboard-grid">
+
+        <!-- Summary card spans first 2 columns -->
+        <div class="card summary-card">
+            <h3>Project Summary</h3>
+            <p>
+                This dashboard helps track and analyze student dining behavior across campus using Transact data.
+                The tools below offer insight into health grouping trends, meal quality, and behavioral patterns using
+                interactive Power BI reports. The goal of this application is to allow campus administrators to gain the analysis 
+                needed based on student dining habits and visualized data metrics to analyze their campus dining information. Each tool
+                sets to help a administrator identify the eating habits, rate, and possible incentives that can overall allow them to put
+                in place decisions that help improve student well being and overall eating habits of campus dining.
+            </p>
+        </div>
+
+        <!-- Top-right card -->
+        <a href="{{ url_for('report', report_id='filter') }}" class="card-link">
+            <div class="card hover-card">
+                <h3>Filter Data</h3>
+                <img src="{{ url_for('static', filename='images/filterData.png') }}" />
+                <div class="bubble-desc">Allows granular filtering of dining data across date, time, and location.</div>
+            </div>
+        </a>
+
+        <!-- Bottom row -->
+        <a href="{{ url_for('report', report_id='groupings') }}" class="card-link">
+            <div class="card hover-card">
+                <h3>Health Groupings</h3>
+                <img src="{{ url_for('static', filename='images/Groupingbox.png') }}" />
+                <div class="bubble-desc">Displays clusters of student health profiles based on nutrition and habits. Allowing for incentive distribution to 
+                    student body profiles to improve student dining habits and well being.
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('report', report_id='overview') }}" class="card-link">
+            <div class="card hover-card">
+                <h3>Dining Overview</h3>
+                <img src="{{ url_for('static', filename='images/Heatmap Img.png') }}" />
+                <div class="bubble-desc">Overview of student dining on campus broken down into timing, count, and heatmap metrics for each dining period to visualize
+                    rate of dining habits and trends of student dining locations on campus
+                </div>
+            </div>
+        </a>
+
+        <a href="{{ url_for('report', report_id='nutrition') }}" class="card-link">
+            <div class="card hover-card">
+                <h3>Nutrition Analysis</h3>
+                <img src="{{ url_for('static', filename='images/Nutrition Analysis Dash.png') }}" />
+                <div class="bubble-desc">Breaks down meal composition and evaluates nutritional quality per meal by Location. Calculates health 
+                    score of a locations menu and overall student eating score at filtered location. User can also view a full tabular view of all 
+                    location scoring metrics for comparison and data analysis.
+                </div>
+            </div>
+        </a>
+    </section>
+</div>
+{% endblock %}
