@@ -22,8 +22,6 @@ def home():
 @app.route("/report/<report_id>")
 def report(report_id):
     report_url = REPORT_URLS.get(report_id)
-    if not report_url:
-        return "Report not found", 404
     return render_template("report.html", report_url=report_url)
 
 if __name__ == "__main__":
